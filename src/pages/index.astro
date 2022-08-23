@@ -45,7 +45,7 @@ const repos = await octokit.rest.repos.listForOrg({
 				repos.data.map((repo) => (
 					<div class="flex flex-col justify-between border border-zinc-700 rounded p-4 max-w-[300px]">
 						<div class="mb-2">
-							<a href={repo.url} class="text-blue-500">
+							<a href={repo.html_url} class="text-blue-500">
 								{repo.full_name}
 							</a>
 							<p class="mt-1 text-sm">{repo.description}</p>
