@@ -1,62 +1,44 @@
 ---
 import { Octokit } from "octokit";
+import Terminal from "../components/Terminal";
 import Layout from "../layouts/Layout.astro";
 
 const octokit = new Octokit();
 
-const repos = await octokit.rest.repos.listForOrg({
-	org: "eptic-solutions",
-	sort: "updated",
-});
+let repos;
+try {
+  repos = await octokit.rest.repos.listForOrg({
+    org: "eptic-solutions",
+    sort: "updated",
+  });
+} catch (_) {}
 ---
 
 <Layout title="EPTIC Solutions">
-	<div
-		class="absolute px-2 text-right text-white -translate-x-1/2 bg-blue-500 top-2 left-1/2 rounded py-0.5"
-	>
-		<a
-			href="https://terminal.eptic.ro/?ref=eptic.ro"
-			class="flex items-center justify-center font-mono"
-		>
-			Check out the new terminal app
-			<svg
-				xmlns="http://www.w3.org/2000/svg"
-				fill="none"
-				viewBox="0 0 24 24"
-				stroke="currentColor"
-				stroke-width="2"
-				class="ml-2 h-5 w-5"
-				><path
-					stroke-linecap="round"
-					stroke-linejoin="round"
-					d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-				></path>
-			</svg>
-		</a>
-	</div>
-	<div
-		class="flex flex-col items-center justify-center h-screen min-h-screen px-2 text-gray-500 bg-zinc-900"
-	>
-		<div class="mb-16">
-			<img width="300" height="100" src="/logo.svg" />
-		</div>
-		<div class="grid grid-cols-1 gap-8 sm:grid-cols-3">
-			{
-				repos.data.map((repo) => (
-					<div class="flex flex-col justify-between border border-zinc-700 rounded p-4 max-w-[300px]">
-						<div class="mb-2">
-							<a href={repo.html_url} class="text-blue-500">
-								{repo.full_name}
-							</a>
-							<p class="mt-1 text-sm">{repo.description}</p>
-						</div>
-						<div class="flex items-center justify-between text-sm">
-							<span>{repo.language}</span>
-							<span>{repo.license?.name}</span>
-						</div>
-					</div>
-				))
-			}
-		</div>
-	</div>
+  <Terminal client:only="react" />
+  <div
+    class="flex flex-col items-center justify-center h-screen min-h-screen px-2 text-gray-500 bg-zinc-900"
+  >
+    <div class="mb-16">
+      <img width="300" height="100" src="/logo.svg" />
+    </div>
+    <div class="grid grid-cols-1 gap-8 sm:grid-cols-3">
+      {
+        repos?.data.map((repo) => (
+          <div class="flex flex-col justify-between border border-zinc-700 rounded p-4 max-w-[300px]">
+            <div class="mb-2">
+              <a href={repo.html_url} class="text-blue-500">
+                {repo.full_name}
+              </a>
+              <p class="mt-1 text-sm">{repo.description}</p>
+            </div>
+            <div class="flex items-center justify-between text-sm">
+              <span>{repo.language}</span>
+              <span>{repo.license?.name}</span>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
 </Layout>
