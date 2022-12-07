@@ -1,18 +1,12 @@
 import FirebaseSingleton from "../libs/firebase";
 import { getBoolean } from "firebase/remote-config";
-import { useState, useEffect } from "react";
 
 FirebaseSingleton.initialize();
 const remoteConfig = await FirebaseSingleton.getRemoteConfig();
 
 const Terminal = () => {
-  const [show, setShow] = useState(false);
-
-  useEffect(() => {
-    if (remoteConfig) {
-      setShow(getBoolean(remoteConfig, "show_terminal"));
-    }
-  }, []);
+  const show = remoteConfig ? getBoolean(remoteConfig, "show_terminal") : false;
+  console.log(show);
 
   if (!show) return <></>;
   return (
