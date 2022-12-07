@@ -1,5 +1,10 @@
 import { initializeApp, type FirebaseApp } from "firebase/app";
-import type { RemoteConfig } from "firebase/remote-config";
+import {
+  fetchAndActivate,
+  getRemoteConfig as getRC,
+  isSupported,
+  type RemoteConfig,
+} from "firebase/remote-config";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -35,12 +40,12 @@ const getRemoteConfig = async () => {
   if (import.meta.env.SSR) return undefined;
   if (remoteConfigInstance) return remoteConfigInstance;
 
-  const { getRemoteConfig, fetchAndActivate } = await import(
-    "firebase/remote-config"
-  );
-  remoteConfigInstance = getRemoteConfig(getInstance());
-  remoteConfigInstance.settings.minimumFetchIntervalMillis = 3e3;
-  await fetchAndActivate(remoteConfigInstance);
+  remoteConfigInstance = getRC(getInstance());
+  remoteConfigInstance.settings.minimumFetchIntervalMillis = 3_000;
+
+  if (await isSupported()) {
+    await fetchAndActivate(remoteConfigInstance!);
+  }
 
   return remoteConfigInstance;
 };

@@ -6,7 +6,6 @@ const remoteConfig = await FirebaseSingleton.getRemoteConfig();
 
 const Terminal = () => {
   const show = remoteConfig ? getBoolean(remoteConfig, "show_terminal") : false;
-  console.log(show);
 
   if (!show) return <></>;
   return (
