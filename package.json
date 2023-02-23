@@ -2,6 +2,7 @@
   "name": "@example/basics",
   "version": "0.0.1",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
@@ -11,15 +12,18 @@
   },
   "devDependencies": {
     "@astrojs/react": "^1.2.1",
-    "@astrojs/tailwind": "^1.0.0",
+    "@astrojs/svelte": "^2.0.2",
+    "@astrojs/tailwind": "^3.0.1",
     "@types/react": "^18.0.21",
     "@types/react-dom": "^18.0.6",
-    "astro": "^1.0.7",
+    "astro": "^2.0.4",
     "react": "^18.0.0",
-    "react-dom": "^18.0.0"
+    "react-dom": "^18.0.0",
+    "svelte": "^3.54.0"
   },
   "dependencies": {
     "firebase": "^9.12.1",
-    "octokit": "^2.0.7"
+    "octokit": "^2.0.7",
+    "tailwindcss": "^3.0.24"
   }
 }

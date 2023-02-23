@@ -1,6 +1,6 @@
 ---
 import { Octokit } from "octokit";
-import Terminal from "../components/Terminal";
+import Terminal from "../components/Terminal.svelte";
 import Layout from "../layouts/Layout.astro";
 
 const octokit = new Octokit();
@@ -15,7 +15,7 @@ try {
 ---
 
 <Layout title="EPTIC Solutions">
-  <Terminal client:only="react" />
+  <Terminal client:only="svelte" />
   <div
     class="flex flex-col items-center justify-center h-screen min-h-screen px-2 text-gray-500 bg-zinc-900"
   >

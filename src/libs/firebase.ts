@@ -5,8 +5,11 @@ import {
   isSupported,
   type RemoteConfig,
 } from "firebase/remote-config";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import {
+  type Analytics,
+  initializeAnalytics,
+  setAnalyticsCollectionEnabled,
+} from "firebase/analytics";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -16,38 +19,45 @@ const firebaseConfig = {
   storageBucket: "eptic-website.appspot.com",
   messagingSenderId: "325243281817",
   appId: "1:325243281817:web:a0592703d3c37105513308",
+  measurementId: "G-9DWW2S7WD0",
 };
 
-let firebaseInstance: FirebaseApp | undefined = undefined;
-let remoteConfigInstance: RemoteConfig | undefined = undefined;
+let remoteConfig: RemoteConfig | undefined = undefined;
+let analytics: Analytics | undefined = undefined;
 
 const initialize = () => {
   if (import.meta.env.SSR) return undefined;
-  if (firebaseInstance) return firebaseInstance;
 
-  firebaseInstance = initializeApp(firebaseConfig);
-  return firebaseInstance;
+  const firebase = initializeApp(firebaseConfig);
+  if (!analytics) {
+    analytics = initializeAnalytics(firebase);
+    setAnalyticsCollectionEnabled(analytics, true);
+  }
+
+  return firebase;
 };
+
+let firebase: FirebaseApp | undefined = initialize();
 
 const getInstance = () => {
   if (import.meta.env.SSR) return undefined;
-  if (!firebaseInstance) initialize();
+  if (!firebase) initialize();
 
-  return firebaseInstance;
+  return firebase;
 };
 
 const getRemoteConfig = async () => {
   if (import.meta.env.SSR) return undefined;
-  if (remoteConfigInstance) return remoteConfigInstance;
+  if (remoteConfig) return remoteConfig;
 
-  remoteConfigInstance = getRC(getInstance());
-  remoteConfigInstance.settings.minimumFetchIntervalMillis = 3_000;
+  remoteConfig = getRC(getInstance());
+  remoteConfig.settings.minimumFetchIntervalMillis = 3_000;
 
   if (await isSupported()) {
-    await fetchAndActivate(remoteConfigInstance!);
+    await fetchAndActivate(remoteConfig!);
   }
 
-  return remoteConfigInstance;
+  return remoteConfig;
 };
 
-export default { initialize, getRemoteConfig };
+export default { firebase, getRemoteConfig, analytics };
