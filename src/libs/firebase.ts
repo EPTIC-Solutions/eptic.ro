@@ -51,6 +51,7 @@ const getRemoteConfig = async () => {
   if (remoteConfig) return remoteConfig;
 
   remoteConfig = getRC(getInstance());
+
   remoteConfig.settings.minimumFetchIntervalMillis = 3_000;
 
   if (await isSupported()) {
