@@ -13,13 +13,13 @@ import {
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyCm6LKcW_KIzU__h2Ur0mMZq160Gpe1Dac",
-  authDomain: "eptic-website.firebaseapp.com",
-  projectId: "eptic-website",
-  storageBucket: "eptic-website.appspot.com",
-  messagingSenderId: "325243281817",
-  appId: "1:325243281817:web:a0592703d3c37105513308",
-  measurementId: "G-9DWW2S7WD0",
+  apiKey: "AIzaSyANjkzMrj17herOoL5w-5fddIBQO2s_6GY",
+  authDomain: "eptic-ro.firebaseapp.com",
+  projectId: "eptic-ro",
+  storageBucket: "eptic-ro.appspot.com",
+  messagingSenderId: "516973874019",
+  appId: "1:516973874019:web:f931118fd2b7f12295e156",
+  measurementId: "G-QR933WDX98"
 };
 
 let remoteConfig: RemoteConfig | undefined = undefined;
