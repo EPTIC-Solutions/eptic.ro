@@ -15,16 +15,16 @@
     @vite(['resources/css/app.css'])
 </head>
 
-<body>
-    <div class="flex flex-col items-center justify-center h-screen min-h-screen px-2 text-zinc-500">
-        <div class="mb-16">
+<body class="dark:bg-zinc-900">
+    <div class="flex flex-col items-center min-h-screen px-4 md:px-8 text-zinc-500 dark:text-zinc-300">
+        <div class="my-8 md:my-16">
             <img width="300" height="100" src="https://raw.githubusercontent.com/EPTIC-Solutions/art/master/logos/default-monochrome.svg" alt="Eptic LOGO" />
         </div>
-        <div class="grid grid-cols-1 gap-8 sm:grid-cols-3 max-w-screen-lg">
+        <div class="grid max-w-screen-lg grid-cols-1 gap-4 md:gap-8 md:grid-cols-2 lg:grid-cols-3">
             @foreach($repos as $repo)
-            <div class="flex flex-col justify-between shadow hover:drop-shadow hover:scale-105 transition border border-zinc-300 rounded-md p-4 bg-gradient-to-b to-zinc-50 from-white">
+            <div class="flex flex-col justify-between p-4 transition border rounded-md card border-zinc-300 dark:border-zinc-700 bg-gradient-to-b to-zinc-50 from-white dark:to-zinc-950 dark:from-zinc-900">
                 <div class="mb-2">
-                    <a href="{{ $repo['html_url'] }}" class="text-blue-400">
+                    <a href="{{ $repo['html_url'] }}" class="text-blue-400 dark:text-blue-500">
                         {{ $repo['full_name'] }}
                     </a>
                     @if($repo['description'])
