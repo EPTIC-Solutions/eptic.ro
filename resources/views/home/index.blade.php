@@ -26,8 +26,12 @@
                     <a href="{{ $repo['html_url'] }}" class="text-blue-400 dark:text-blue-500">
                         {{ $repo['full_name'] }}
                     </a>
-                    @if($repo['description'])
-                    <p class="mt-1 text-sm">{{ $repo['description'] }}</p>
+                    @if($repo['full_name'] === 'EPTIC-Solutions/eptic.ro')
+                        <p class="mt-1 text-sm">The website you are currently on.</p>
+                    @else
+                        @if($repo['description'])
+                        <p class="mt-1 text-sm">{{ $repo['description'] }}</p>
+                        @endif
                     @endif
                 </div>
                 <div class="flex items-center justify-between text-sm">
