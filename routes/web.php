@@ -16,5 +16,5 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index']);
 Route::get('/test', function () {
-    return '<div>Test</div>';
+    return '<div>Test2</div>';
 });
