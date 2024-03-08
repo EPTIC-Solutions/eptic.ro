@@ -40,7 +40,7 @@ const socials = [
 
 const socialHandler: CommandHandler = () => {
   writeEmptyRow();
-  writeLine("EPTIC (wizzymore) online");
+  writeLine("EPTIC online");
   writeEmptyRow();
   socials.forEach((line) => {
     writeLine(

@@ -12,7 +12,7 @@ type Repo = {
 
 const reposHandler: CommandHandler = () => {
   writeEmptyRow();
-  writeLine("EPTIC (wizzymore) online");
+  writeLine("EPTIC repositories:");
   writeEmptyRow();
   repos.forEach((repo: Repo) => {
     const description = repo.full_name.includes("/eptic.ro")
