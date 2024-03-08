@@ -1,3 +1,5 @@
+import { $ } from "../globals";
+
 export type CommandName = string;
 export type CommandHandler = () => boolean;
 
@@ -34,6 +36,23 @@ const loadCommands = () => {
     const commandName = formattedPath.replace(/\.[^/.]+$/, "");
     registerCommand(commandName, mod.default as () => boolean, mod.description);
   }
+
+  window.addEventListener("keydown", (e) => {
+    if (e.key !== "Tab") {
+      return;
+    }
+    e.preventDefault();
+
+    const inputElement = $<HTMLInputElement>("#command-input");
+    const input = inputElement.value;
+    const command = input.split(" ")[0]!;
+    const matches = Array.from(commands.keys()).filter((c) =>
+      c.startsWith(command)
+    );
+    if (matches.length !== 0) {
+      inputElement.value = matches[0]!;
+    }
+  });
 };
 
 type Line = {
