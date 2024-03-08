@@ -1,6 +1,14 @@
-import { CommandHandler } from "./init";
+import { CommandHandler, writeLine } from "./init";
 
-const clearHandler: CommandHandler = () => {
+const clearHandler: CommandHandler = (args) => {
+  if (args.length > 0) {
+    writeLine({
+      line: `Command 'clear' doesn't take any arguments.`,
+      classname: "command-not-found",
+    });
+    return false;
+  }
+
   let lastChild;
   while ((lastChild = window.$<HTMLDivElement>("#terminal").lastChild)) {
     lastChild.remove();

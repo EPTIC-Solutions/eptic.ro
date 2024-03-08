@@ -15,9 +15,17 @@ const banner = [
   '<span class="color2">For a list of available commands, type</span> <span class="highlight">\'help\'</span><span class="color2">.</span>',
 ];
 
-const bannerHandler: CommandHandler = () => {
+const bannerHandler: CommandHandler = (args) => {
+  if (args.length > 0) {
+    writeLine({
+      line: `Command 'banner' doesn't take any arguments.`,
+      classname: "command-not-found",
+    });
+    return false;
+  }
+
   for (const line of banner) {
-    writeLine(line);
+    writeLine({ line });
   }
   return true;
 };

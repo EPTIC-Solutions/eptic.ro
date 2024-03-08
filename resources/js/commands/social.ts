@@ -38,17 +38,25 @@ const socials = [
   },
 ];
 
-const socialHandler: CommandHandler = () => {
+const socialHandler: CommandHandler = (args) => {
+  if (args.length > 0) {
+    writeLine({
+      line: `Command 'social' doesn't take any arguments.`,
+      classname: "command-not-found",
+    });
+    return false;
+  }
+
   writeEmptyRow();
-  writeLine("EPTIC online");
+  writeLine({ line: "EPTIC online" });
   writeEmptyRow();
   socials.forEach((line) => {
-    writeLine(
-      `
+    writeLine({
+      line: `
     <span class="command-text color2">${line.name}</span> <a href="${line.url}" target="_blank">${line.description}</a>
     `,
-      "social-command"
-    );
+      classname: "social-command",
+    });
   });
 
   return true;

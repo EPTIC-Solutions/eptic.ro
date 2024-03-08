@@ -10,25 +10,33 @@ type Repo = {
   language: string;
 };
 
-const reposHandler: CommandHandler = () => {
+const reposHandler: CommandHandler = (args) => {
+  if (args.length > 0) {
+    writeLine({
+      line: `Command 'repos' doesn't take any arguments.`,
+      classname: "command-not-found",
+    });
+    return false;
+  }
+
   writeEmptyRow();
-  writeLine("EPTIC repositories:");
+  writeLine({ line: "EPTIC repositories:" });
   writeEmptyRow();
   repos.forEach((repo: Repo) => {
     const description = repo.full_name.includes("/eptic.ro")
       ? `The website you are currently on.`
       : repo.description;
-    writeLine(
-      `
+    writeLine({
+      line: `
       <div><a class="command-text" href="${repo.html_url}" target="_blank">${repo.full_name}</a></div>
     `,
-      "repos-command"
-    );
+      classname: "repos-command",
+    });
     description &&
-      writeLine(
-        `<span><span class="color2">-</span> ${description}</span>`,
-        "repos-command"
-      );
+      writeLine({
+        line: `<span><span class="color2">-</span> ${description}</span>`,
+        classname: "repos-command",
+      });
   });
   return true;
 };

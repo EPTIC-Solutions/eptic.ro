@@ -67,14 +67,18 @@ const handleCommandInput = function (e: KeyboardEvent) {
       }
 
       commandsHistory.addToHistory(input);
+      commandInput.value = "";
+      const commandWithArgs = input.trim().split(" ");
+      const command = commandWithArgs[0]!;
+      const args = commandWithArgs.slice(1);
 
-      if (commands.has(input)) {
-        commands.get(input)!();
+      if (commands.has(command)) {
+        commands.get(command)!(args);
       } else {
-        writeLine(
-          `Command not found '${input}'. For a list of commands type <span class="command">'help'</span>.`,
-          "command-not-found"
-        );
+        writeLine({
+          line: `Command not found '${command}'. For a list of commands type <span class="command">'help'</span>.`,
+          classname: "command-not-found",
+        });
       }
       break;
     case "ArrowUp":
@@ -139,7 +143,6 @@ const bootstrap = async () => {
     }
     mutationTimeout = setTimeout(() => {
       line.hidden = false;
-      commandInput.value = "";
       commandInput.focus();
     }, 200);
   });
@@ -150,7 +153,7 @@ const bootstrap = async () => {
 
   // Show the initial Header Banner
   if ("banner" in commands) {
-    commands.get("banner")!();
+    commands.get("banner")!([]);
   }
 
   $("#app").classList.remove("loading");

@@ -1,7 +1,7 @@
 import { $ } from "../globals";
 
 export type CommandName = string;
-export type CommandHandler = () => boolean;
+export type CommandHandler = (args: string[]) => boolean;
 
 interface CommandHelp {
   [key: CommandName]: string;
@@ -11,7 +11,7 @@ let commands: Map<CommandName, CommandHandler> = new Map<
   CommandName,
   CommandHandler
 >();
-let helpCommands: CommandHelp[] = [];
+let helpCommands: CommandHelp = {};
 
 const registerCommand = (
   commandName: string,
@@ -63,26 +63,39 @@ type Line = {
 const lines: Line[] = [];
 
 const writeEmptyRow = () => {
-  writeLine("<br>", undefined, true);
+  writeLine({ line: "<br>", instant: true });
 };
 
-const writeLine = (
-  line: string,
-  classname: string | Array<string> | undefined = undefined,
-  isInstant: boolean = false
-) => {
+const writeLine = ({
+  line,
+  classname = undefined,
+  instant = false,
+  html = true,
+}: {
+  line: string;
+  classname?: string | Array<string>;
+  instant?: boolean;
+  html?: boolean;
+}) => {
   lines.push({ line, classname });
-  setTimeout(doWriteLine, 50 * (isInstant ? 1 : lines.length));
+  setTimeout(
+    doWriteLine.bind(undefined, html),
+    50 * (instant ? 1 : lines.length)
+  );
 };
 
-const doWriteLine = () => {
+const doWriteLine = (isHtml: boolean) => {
   let lineObject;
   if ((lineObject = lines.shift())) {
     const container = document.createElement("div");
     container.classList.add("command-container", "typing");
     const newLine = document.createElement("p");
     container.appendChild(newLine);
-    newLine.innerHTML = lineObject.line;
+    if (isHtml) {
+      newLine.innerHTML = lineObject.line;
+    } else {
+      newLine.innerText = lineObject.line;
+    }
     if (lineObject.classname) {
       if (Array.isArray(lineObject.classname)) {
         lineObject.classname.forEach((classname) => {
