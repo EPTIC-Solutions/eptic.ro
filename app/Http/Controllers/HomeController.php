@@ -10,7 +10,7 @@ class HomeController extends Controller
 {
     public function index(): Response
     {
-        $repos = Cache::remember('repos', 3600, function () {
+        $repos = Cache::store('octane')->remember('repos', 3600, function () {
             return Http::get('https://api.github.com/users/EPTIC-Solutions/repos')->json();
         });
 
