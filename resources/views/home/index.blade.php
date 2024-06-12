@@ -7,10 +7,6 @@
     <link rel="icon" href="/favicon.png" />
     <title>EPTIC Solutions</title>
     <meta name="description" content="EPTIC Solutions is a romanian based software agency." />
-    @production
-        <script async src="https://analytics.eptic.ro/script.js" data-website-id="8b56bd02-1b30-4f98-93e2-7994bd258d25">
-        </script>
-    @endproduction
     @vite(['resources/css/app.css', 'resources/js/main.ts'])
 </head>
 
