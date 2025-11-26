@@ -1,7 +1,7 @@
 import { type CommandHandler, writeLine, writeEmptyRow } from "./init";
 
 // @ts-ignore
-const repos = window.repos;
+const repos = window.repos as Repo[];
 
 type Repo = {
   full_name: string;
@@ -28,7 +28,7 @@ const reposHandler: CommandHandler = (args) => {
       : repo.description;
     writeLine({
       line: `
-      <div><a class="command-text" href="${repo.html_url}" target="_blank">${repo.full_name}</a></div>
+      <div><a class="command-text" href="${repo.html_url}" target="_blank">${repo.full_name}</a>${repo.language ? ' * ' + repo.language : ''}</div>
     `,
       classname: "repos-command",
     });
