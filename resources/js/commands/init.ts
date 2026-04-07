@@ -62,14 +62,12 @@ const doWriteLine = () => {
   if ((line = lines.shift())) {
     const container = document.createElement("div");
     container.classList.add("command-container");
-    const parent = document.createElement("pre");
-    container.appendChild(parent);
 
-    parent.appendChild(line.getElement());
+    container.appendChild(line.getElement());
 
     let statusEl;
     if ((statusEl = line.getStatusElement())) {
-      parent.appendChild(statusEl);
+      container.appendChild(statusEl);
     }
 
     terminal.appendChild(container);

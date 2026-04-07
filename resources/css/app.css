@@ -142,11 +142,12 @@ p {
 }
 
 .command-container {
+    white-space: pre-wrap;
     max-width: 715px;
     line-height: 1.3em;
 }
 
-.command-container.wide {
+.command-container:has(.command-line-text.wide) {
     max-width: none;
 }
 

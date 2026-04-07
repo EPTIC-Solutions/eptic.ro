@@ -5,6 +5,7 @@ type Color = "default" | "error" | "highlight" | "secondary";
  */
 export class TText {
   public offset = 0;
+  public wide = false;
 
   constructor(
     public line: string | TText | Array<string | TText>,
@@ -37,6 +38,11 @@ export class TText {
     return this;
   }
 
+  public setWide(wide: boolean = true): TText {
+    this.wide = wide;
+    return this;
+  }
+
   protected getBaseElement(): HTMLElement {
     return document.createElement("span");
   }
@@ -46,6 +52,9 @@ export class TText {
     el.classList.add("command-line-text", `color-${this.color}`);
     if (this.offset) {
       el.style.marginLeft = `${this.offset}ch`;
+    }
+    if (this.wide) {
+      el.classList.add("wide");
     }
 
     const lines = Array.isArray(this.line) ? this.line : [this.line];

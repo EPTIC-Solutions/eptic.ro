@@ -33,7 +33,7 @@ const bannerHandler: CommandHandler = (args) => {
 
   if (window.innerWidth >= 1024) {
     for (const line of banner) {
-      writeLine({ line: new TText(line) });
+      writeLine({ line: new TText(line).setWide() });
     }
   }
   for (const line of message) {
