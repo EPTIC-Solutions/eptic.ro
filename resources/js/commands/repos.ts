@@ -1,4 +1,5 @@
 import { type CommandHandler, writeLine, writeEmptyRow } from "./init";
+import { TAnchor, TText } from "../line";
 
 // @ts-ignore
 const repos = window.repos as Repo[];
@@ -11,32 +12,41 @@ type Repo = {
 };
 
 const reposHandler: CommandHandler = (args) => {
-  if (args.length > 0) {
+  if (args && args.length > 0) {
     writeLine({
-      line: `Command 'repos' doesn't take any arguments.`,
-      classname: "command-not-found",
+      line: new TText(`Command 'repos' doesn't take any arguments.`),
     });
     return false;
   }
 
   writeEmptyRow();
-  writeLine({ line: "EPTIC repositories:" });
+  writeLine({ line: new TText("EPTIC repositories:") });
   writeEmptyRow();
+  const offset = 2;
   repos.forEach((repo: Repo) => {
     const description = repo.full_name.includes("/eptic.ro")
       ? `The website you are currently on.`
       : repo.description;
+    const anchor = new TAnchor(repo.full_name, repo.html_url)
+      .setColor("highlight")
+      .setOffset(offset);
+    const line = new TText([anchor]);
+
+    if (repo.language) {
+      line.setStatus(repo.language).setStatusColor("secondary");
+    }
+
     writeLine({
-      line: `
-      <div><a class="command-text" href="${repo.html_url}" target="_blank">${repo.full_name}</a>${repo.language ? ' * ' + repo.language : ''}</div>
-    `,
-      classname: "repos-command",
+      line,
     });
-    description &&
+    if (description) {
       writeLine({
-        line: `<span><span class="color2">-</span> ${description}</span>`,
-        classname: "repos-command",
+        line: new TText([
+          new TText("- ").setColor("secondary"),
+          description,
+        ]).setOffset(offset + 1),
       });
+    }
   });
   return true;
 };

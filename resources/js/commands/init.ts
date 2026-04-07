@@ -1,11 +1,13 @@
-import { $ } from "../globals";
+import { TBreakRow, TText } from "../line";
 
 export type CommandName = string;
-export type CommandHandler = (args: string[]) => boolean;
+export type CommandHandler = (args?: string[]) => boolean;
 
 interface CommandHelp {
   [key: CommandName]: string;
 }
+
+const terminal = document.querySelector<HTMLDivElement>("#terminal")!;
 
 let commands: Map<CommandName, CommandHandler> = new Map<
   CommandName,
@@ -16,7 +18,7 @@ let helpCommands: CommandHelp = {};
 const registerCommand = (
   commandName: string,
   handler: () => boolean,
-  description: string | undefined = undefined
+  description: string | undefined = undefined,
 ) => {
   Object.assign(commands, { [commandName]: handler });
   commands.set(commandName, handler);
@@ -29,96 +31,50 @@ const loadCommands = () => {
   for (const path in modules) {
     const mod = modules[path] as any;
     if (!mod.default) {
-      console.error("Module " + path + " does not export a default export.");
-      return;
+      continue;
     }
     const formattedPath = path.replace(/^\.\//, "");
     const commandName = formattedPath.replace(/\.[^/.]+$/, "");
     registerCommand(commandName, mod.default as () => boolean, mod.description);
   }
-
-  window.addEventListener("keydown", (e) => {
-    if (e.key !== "Tab") {
-      return;
-    }
-    e.preventDefault();
-
-    const inputElement = $<HTMLInputElement>("#command-input");
-    const input = inputElement.value;
-    const command = input.split(" ")[0]!;
-    const matches = Array.from(commands.keys()).filter((c) =>
-      c.startsWith(command)
-    );
-    if (matches.length !== 0) {
-      inputElement.value = matches[0]!;
-    }
-  });
 };
 
-type Line = {
-  line: string;
-  classname?: string | Array<string>;
-};
-
-const lines: Line[] = [];
+const lines: TText[] = [];
 
 const writeEmptyRow = () => {
-  writeLine({ line: "<br>", instant: true });
+  writeLine({ line: new TBreakRow() });
 };
 
 const writeLine = ({
   line,
-  classname = undefined,
   instant = false,
-  html = true,
 }: {
-  line: string;
-  classname?: string | Array<string>;
+  line: TText;
   instant?: boolean;
   html?: boolean;
 }) => {
-  lines.push({ line, classname });
-  setTimeout(
-    doWriteLine.bind(undefined, html),
-    50 * (instant ? 1 : lines.length)
-  );
+  lines.push(line);
+  setTimeout(doWriteLine, 50 * (instant ? 1 : lines.length));
 };
 
-const doWriteLine = (isHtml: boolean) => {
-  let lineObject;
-  if ((lineObject = lines.shift())) {
+const doWriteLine = () => {
+  let line;
+  if ((line = lines.shift())) {
     const container = document.createElement("div");
-    container.classList.add("command-container", "typing");
-    const newLine = document.createElement("p");
-    container.appendChild(newLine);
-    if (isHtml) {
-      newLine.innerHTML = lineObject.line;
-    } else {
-      newLine.innerText = lineObject.line;
+    container.classList.add("command-container");
+    const parent = document.createElement("pre");
+    container.appendChild(parent);
+
+    parent.appendChild(line.getElement());
+
+    let statusEl;
+    if ((statusEl = line.getStatusElement())) {
+      parent.appendChild(statusEl);
     }
-    if (lineObject.classname) {
-      if (Array.isArray(lineObject.classname)) {
-        lineObject.classname.forEach((classname) => {
-          newLine.classList.add(classname);
-        });
-      } else {
-        newLine.classList.add(lineObject.classname);
-      }
-      newLine.classList.add();
-    } else {
-      newLine.classList.add("command");
-    }
-    window.$("#terminal").append(container);
+
+    terminal.appendChild(container);
     return;
   }
 };
-
-addEventListener("animationend", (event) => {
-  if (event.animationName !== "typing") {
-    return;
-  }
-  (event.target as HTMLDivElement).style.overflow = "overlay";
-  (event.target as HTMLDivElement).classList.remove("typing");
-});
 
 export { commands, helpCommands, loadCommands, writeLine, writeEmptyRow };

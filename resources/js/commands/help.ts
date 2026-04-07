@@ -5,12 +5,14 @@ import {
   helpCommands,
   writeEmptyRow,
 } from "./init";
+import { TText } from "../line";
 
 const helpHandler: CommandHandler = (args) => {
-  if (args.length > 1) {
+  if (!args || args.length > 1) {
     writeLine({
-      line: "Syntax: help <command> - for more information about a specific command.",
-      classname: "command-not-found",
+      line: new TText(
+        "Syntax: help <command> - for more information about a specific command.",
+      ),
       html: false,
     });
     return false;
@@ -21,36 +23,35 @@ const helpHandler: CommandHandler = (args) => {
     if (helpCommands[command]) {
       const argsHelp = command === "help" ? " <command>" : "";
       writeLine({
-        line: `Usage:`,
+        line: new TText(`Usage:`),
       });
       writeLine({
-        line: `  ${helpCommands[command]}`,
-        classname: ["command", "color2"],
-        html: false,
+        line: new TText(`  ${helpCommands[command]}`),
       });
       writeLine({
-        line: `  ${command}${argsHelp}`,
-        html: false,
+        line: new TText(`  ${command}${argsHelp}`),
       });
       return true;
     }
     writeLine({
-      line: `Command not found '${command}'. For a list of commands type <span class="command">'help'</span>.`,
-      classname: "command-not-found",
+      line: new TText([
+        `Command not found '${command}'. For a list of commands type `,
+        new TText("'help'").setColor("highlight"),
+        ".",
+      ]).setColor("error"),
     });
     return false;
   }
 
   writeEmptyRow();
-  writeLine({ line: `${EPTIC.name} ${EPTIC.version}` });
+  writeLine({ line: new TText(`${EPTIC.name} - ${EPTIC.version}`) });
   writeEmptyRow();
   Object.entries(helpCommands)
     .sort()
     .forEach((command) => {
-      const line = `<span class="command-text color2">${command[0]}</span>${
-        command[1] ?? ""
-      }`;
-      writeLine({ line, classname: "help-command" });
+      writeLine({
+        line: new TText(command[0], command[1]).setStatusColor("highlight"),
+      });
     });
   writeEmptyRow();
   return true;

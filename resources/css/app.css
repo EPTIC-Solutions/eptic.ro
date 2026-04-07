@@ -8,6 +8,11 @@
 
     font-synthesis: none;
     text-rendering: optimizeLegibility;
+
+    --color-default: #519975;
+    --color-secondary: #b89076;
+    --color-highlight: #646cff;
+    --color-error: #ba3035;
 }
 
 a {
@@ -36,25 +41,6 @@ p {
     margin-block-start: 0;
 }
 
-button {
-    border-radius: 8px;
-    border: 1px solid transparent;
-    padding: 0.6em 1.2em;
-    font-size: 1em;
-    font-weight: 500;
-    font-family: inherit;
-    background-color: #1a1a1a;
-    cursor: pointer;
-    transition: border-color 0.25s;
-}
-button:hover {
-    border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-    outline: 4px auto -webkit-focus-ring-color;
-}
-
 @media (prefers-color-scheme: light) {
     :root {
         color: #213547;
@@ -63,26 +49,6 @@ button:focus-visible {
     a:hover {
         color: #747bff;
     }
-    button {
-        background-color: #f9f9f9;
-    }
-}
-
-.cursor {
-    font-size: 12px;
-    color: #73abad;
-    background-color: #73abad;
-    position: relative;
-    opacity: 1;
-    height: 1.5em;
-    width: 10px;
-    max-width: 10px;
-    transform: translateY(4px);
-    overflow: hidden;
-    text-indent: -5px;
-    display: inline-block;
-    text-decoration: blink;
-    animation: blinker 1s linear infinite;
 }
 
 @keyframes blinker {
@@ -91,29 +57,31 @@ button:focus-visible {
     }
 }
 
-#line > .command-text {
-    padding: 0;
-    outline: 0;
-    border: 0;
-    background: transparent;
-    font-family: cursor, monospace;
-    font-size: 16px;
-    color: #bdbdbd;
-    cursor: default;
-    pointer-events: none;
-    font-weight: 600;
-    width: 100%;
-    margin-left: 0.25rem;
-    text-transform: lowercase;
-}
-
-#line::before {
-    content: attr(data-line);
-}
-
 #line {
     display: flex;
     color: #519975;
+    align-items: center;
+}
+
+#line > #command-input {
+    white-space: pre;
+    margin-left: 1ch;
+}
+
+#line > #cursor {
+    font-size: 16px;
+    color: #73abad;
+    background-color: #73abad;
+    position: relative;
+    opacity: 1;
+    width: 10px;
+    height: 22px;
+    overflow: hidden;
+    text-indent: -5px;
+    display: inline-block;
+    text-decoration: blink;
+    animation: blinker 1s linear infinite;
+    animation: blinker 1s step-end infinite;
 }
 
 #app.loading {
@@ -157,142 +125,38 @@ button:focus-visible {
     display: none !important;
 }
 
-.command-container > .command-not-found,
-.command-container > .command {
-    white-space: break-spaces;
-    min-width: max-content;
-    display: block;
+.color-default {
+    color: var(--color-default);
+}
+
+.color-secondary {
+    color: var(--color-secondary);
+}
+
+.color-highlight {
+    color: var(--color-highlight);
+}
+
+.color-error {
+    color: var(--color-error);
+}
+
+.command-container {
+    max-width: 715px;
     line-height: 1.3em;
+}
+
+.command-container.wide {
+    max-width: none;
+}
+
+.command-container > pre {
+    display: flex;
     margin: 0;
-    overflow: hidden;
-    letter-spacing: 0.05em;
-}
-
-.command-container > .command {
-    color: #519975;
-}
-
-.command-container > .command-not-found {
-    color: #ba3035;
-}
-
-.no-animation {
-    animation: typing 0 steps(30, end);
-}
-
-@keyframes typing {
-    from {
-        width: 0;
-    }
-    to {
-        width: 100%;
-    }
-}
-
-.command-container {
-    overflow: hidden;
-    animation: typing 0.5s steps(30, end);
-}
-
-.command-container {
-    & > .social-command,
-    & > .repos-command,
-    & > .help-command {
-        color: #519975;
-        padding-left: 25px;
-        white-space: break-spaces;
-        display: flex;
-    }
-
-    & {
-        & > .social-command,
-        & > .repos-command,
-        & > .help-command {
-            min-width: max-content;
-        }
-    }
-
-    & > .repos-command {
-        display: inline-flex;
-        flex-direction: column;
-
-        & > span {
-            padding-left: 15px;
-        }
-    }
-}
-
-.command-container > .help-command > .command-text {
-    min-width: 300px;
-}
-
-.command-container > .social-command > .command-text {
-    min-width: 200px;
-}
-
-.command-container > .repos-command > .command-text {
-    min-width: 400px;
-}
-
-.command.color2,
-.color2 {
-    color: #b89076;
-}
-
-body {
+    padding: 0;
     font-size: 16px;
 }
 
-@media screen and (max-width: 930px) {
-    body {
-        font-size: 12px;
-    }
-
-    .command > .banner {
-        font-size: 9px;
-        line-height: initial;
-    }
-
-    .command-text {
-        font-size: 11px !important;
-    }
-
-    .command-container > .help-command > .command-text {
-        min-width: 100px;
-    }
-
-    .command-container > .social-command > .command-text {
-        min-width: 150px;
-    }
-
-    .command-container > .social-command {
-        padding-left: 15px;
-    }
-
-    .command-container > .repos-command > .command-text {
-        min-width: 250px;
-    }
-
-    .command-container > .repos-command {
-        padding-left: 15px;
-    }
-}
-
-@media screen and (max-width: 600px) {
-    body {
-        font-size: 11px;
-    }
-
-    .command > .banner {
-        font-size: 6px;
-        line-height: initial;
-    }
-
-    .command-text {
-        font-size: 11px !important;
-    }
-
-    .help-command > .command-text {
-        min-width: 100px;
-    }
+.command-container > pre > .command-line-text {
+    flex-grow: 1;
 }

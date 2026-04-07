@@ -1,4 +1,5 @@
 import { type CommandHandler, writeLine, writeEmptyRow } from "./init";
+import { TAnchor, TText } from "../line";
 
 const socials = [
   {
@@ -11,11 +12,11 @@ const socials = [
     url: "https://github.com/EPTIC-Solutions",
     description: "github.com/EPTIC-Solutions",
   },
-  {
-    name: "twitter",
-    url: "https://twitter.com/CristianBilu",
-    description: "twitter/CristianBilu",
-  },
+  // {
+  //   name: "twitter",
+  //   url: "https://twitter.com/CristianBilu",
+  //   description: "twitter/CristianBilu",
+  // },
   {
     name: "npm",
     url: "https://npmjs.com/~wizzymore",
@@ -39,23 +40,21 @@ const socials = [
 ];
 
 const socialHandler: CommandHandler = (args) => {
-  if (args.length > 0) {
+  if (args && args.length > 0) {
     writeLine({
-      line: `Command 'social' doesn't take any arguments.`,
-      classname: "command-not-found",
+      line: new TText(`Command 'social' doesn't take any arguments.`).setColor(
+        "error",
+      ),
     });
     return false;
   }
 
   writeEmptyRow();
-  writeLine({ line: "EPTIC online" });
+  writeLine({ line: new TText("EPTIC Online") });
   writeEmptyRow();
-  socials.forEach((line) => {
+  socials.forEach((social) => {
     writeLine({
-      line: `
-    <span class="command-text color2">${line.name}</span> <a href="${line.url}" target="_blank">${line.description}</a>
-    `,
-      classname: "social-command",
+      line: new TText(social.name, new TAnchor(social.description, social.url)),
     });
   });
 

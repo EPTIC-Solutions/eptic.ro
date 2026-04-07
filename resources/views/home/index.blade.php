@@ -17,8 +17,10 @@
     </div>
     <div id="app" class="loading">
         <div id="terminal"></div>
-        <div id="line" data-line="visitor@eptic.ro:~$" hidden>
-            <input type="text" id="command-input" class="command-text" />
+        <div id="line">
+            <span>visitor@eptic.ro:~$</span>
+            <div id="command-input" class="command-text"></div>
+            <div id="cursor"></div>
         </div>
     </div>
 

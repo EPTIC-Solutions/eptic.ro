@@ -1,16 +1,18 @@
 import { CommandHandler, writeLine } from "./init";
+import { TText } from "../line";
 
 const clearHandler: CommandHandler = (args) => {
-  if (args.length > 0) {
+  if (args && args.length > 0) {
     writeLine({
-      line: `Command 'clear' doesn't take any arguments.`,
-      classname: "command-not-found",
+      line: new TText(`Command 'clear' doesn't take any arguments.`),
     });
     return false;
   }
 
   let lastChild;
-  while ((lastChild = window.$<HTMLDivElement>("#terminal").lastChild)) {
+  while (
+    (lastChild = document.querySelector<HTMLDivElement>("#terminal")?.lastChild)
+  ) {
     lastChild.remove();
   }
   return true;

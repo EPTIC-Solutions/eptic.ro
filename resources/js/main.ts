@@ -1,23 +1,29 @@
-import { $ } from "./globals";
 import "./commands/init";
 import { commands, loadCommands, writeLine } from "./commands/init";
+import { TText } from "./line";
 
-const commandInput = $<HTMLInputElement>("#command-input");
+const commandInput = document.querySelector<HTMLDivElement>("#command-input")!;
+
+const line = document.querySelector<HTMLDivElement>("#line")!;
+let currentInput = "";
 
 class CommandsHistory {
-  private history: string[] = [];
-  private index: number = 0;
-  public lastCommand: string = "test";
+  public history: string[] = [];
+  public index: number = 0;
+  public lastCommand: string = "";
 
   getHistory(): string[] {
     return this.history.concat();
   }
 
-  getIndex(): string {
+  getCurrentCommand(): string {
     return this.history[this.index] || this.lastCommand;
   }
 
   moveUp(): void {
+    if (this.index === this.history.length) {
+      this.lastCommand = currentInput;
+    }
     if (this.index > 0) {
       this.index--;
     }
@@ -29,8 +35,10 @@ class CommandsHistory {
     }
   }
 
-  addToHistory(command: string): void {
-    this.history.push(command);
+  commit(): void {
+    this.history.push(this.lastCommand);
+    this.resetIndex();
+    this.lastCommand = "";
   }
 
   resetIndex(): void {
@@ -40,124 +48,102 @@ class CommandsHistory {
 
 const commandsHistory = new CommandsHistory();
 
-let isUsingHistory = false;
-
-let inView = false;
-
-const intersectionObs = new IntersectionObserver((e) => {
-  inView = e[0]!.isIntersecting;
-});
-
-intersectionObs.observe(commandInput);
-
-const handleCommandInput = function (e: KeyboardEvent) {
-  let index: string;
-
-  if (!inView) {
-    commandInput.scrollIntoView();
-  }
-
+const handleCommandInput = (e: KeyboardEvent) => {
+  e.preventDefault();
   switch (e.key) {
     case "Enter":
-      isUsingHistory = false;
-      const input = commandInput.value.trim().toLocaleLowerCase();
+      const input = currentInput.trim().toLocaleLowerCase();
 
       if (!input) {
         return;
       }
 
-      commandsHistory.addToHistory(input);
-      commandInput.value = "";
+      commandsHistory.commit();
+      currentInput = "";
       const commandWithArgs = input.trim().split(" ");
-      const command = commandWithArgs[0]!;
+      const commandName = commandWithArgs[0]!;
       const args = commandWithArgs.slice(1);
 
-      if (commands.has(command)) {
-        commands.get(command)!(args);
-      } else {
-        writeLine({
-          line: `Command not found '${command}'. For a list of commands type <span class="command">'help'</span>.`,
-          classname: "command-not-found",
-        });
-      }
+      runCommand(commandName, args);
       break;
     case "ArrowUp":
-      e.preventDefault();
-      if (!isUsingHistory) {
-        commandsHistory.lastCommand = commandInput.value;
-        commandsHistory.resetIndex();
-        isUsingHistory = true;
-      }
       commandsHistory.moveUp();
-      index = commandsHistory.getIndex();
-      if (index) {
-        commandInput.value = index;
-      }
+      currentInput = commandsHistory.getCurrentCommand();
       break;
     case "ArrowDown":
-      e.preventDefault();
-      if (!isUsingHistory) {
-        commandsHistory.lastCommand = commandInput.value;
-        commandsHistory.resetIndex();
-        isUsingHistory = true;
-      }
       commandsHistory.moveDown();
-      index = commandsHistory.getIndex();
-      if (index) {
-        commandInput.value = index;
-      }
+      currentInput = commandsHistory.getCurrentCommand();
+      break;
+    case "Backspace":
+      currentInput = currentInput.slice(0, -1);
+      commandInput.textContent = currentInput;
       break;
     default:
-      isUsingHistory = false;
+      if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+        currentInput += e.key;
+      }
+      commandsHistory.lastCommand = currentInput;
+  }
+
+  if (currentInput !== commandInput.textContent) {
+    commandInput.textContent = currentInput;
+    commandsHistory.resetIndex();
+  }
+};
+
+let hiderTimeout: ReturnType<typeof setTimeout> | undefined = undefined;
+
+const runCommand = (commandName: string, args: string[]) => {
+  line.hidden = true;
+  hiderTimeout = setTimeout(() => {
+    line.hidden = false;
+    scroll({ behavior: "instant", top: document.body.scrollHeight });
+  }, 50);
+  let command;
+  if ((command = commands.get(commandName))) {
+    console.log("Running command", { commandName, args });
+    command(args);
+  } else {
+    writeLine({
+      line: new TText([
+        `Command not found '${commandName}'. For a list of commands type `,
+        new TText("'help'").setColor("highlight"),
+        ".",
+      ]).setColor("error"),
+    });
   }
 };
 
 const bootstrap = async () => {
   loadCommands();
 
-  commandInput.addEventListener("keydown", handleCommandInput);
+  window.addEventListener("keydown", handleCommandInput);
 
-  window.addEventListener("click", function () {
-    commandInput.focus();
-  });
-
-  let touchStart = 0;
-  window.addEventListener("touchstart", function (e) {
-    touchStart = e.timeStamp;
-  });
-  window.addEventListener("touchend", function (e) {
-    if (e.timeStamp - touchStart < 50) {
-      commandInput.focus();
-    }
-  });
-
-  let mutationTimeout: number | null;
-  const line = $<HTMLDivElement>("#line");
   const mutation = new MutationObserver(() => {
     line.hidden = true;
-    if (mutationTimeout) {
-      clearTimeout(mutationTimeout);
-      line.hidden = false;
-      commandInput.focus();
-      line.hidden = true;
+    if (hiderTimeout !== undefined) {
+      clearTimeout(hiderTimeout);
     }
-    mutationTimeout = setTimeout(() => {
+
+    scroll({ behavior: "instant", top: document.body.scrollHeight });
+
+    hiderTimeout = setTimeout(() => {
       line.hidden = false;
-      commandInput.focus();
-    }, 200);
+      scroll({ behavior: "instant", top: document.body.scrollHeight });
+    }, 50);
   });
 
-  mutation.observe($("#terminal"), {
+  mutation.observe(document.querySelector<HTMLDivElement>("#terminal")!, {
     childList: true,
   });
 
+  document.querySelector<HTMLDivElement>("#app")!.classList.remove("loading");
+  document.querySelector<HTMLDivElement>("#loader")!.remove();
+
   // Show the initial Header Banner
   if ("banner" in commands) {
-    commands.get("banner")!([]);
+    runCommand("banner", []);
   }
-
-  $("#app").classList.remove("loading");
-  $("#loader").remove();
 };
 
 window.onload = bootstrap;
